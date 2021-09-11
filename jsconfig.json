@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "module": "es6",
+    "target": "es2019",
+    "jsx": "react",
+    "paths": {
+      "~": ["./"]
+    }
+  },
+  "exclude": ["node_modules", ".next"]
+}
