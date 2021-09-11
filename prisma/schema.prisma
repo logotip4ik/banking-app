@@ -23,8 +23,7 @@ model BankUser {
 model Bank {
   id Int @id
 
-  User   BankUser? @relation(fields: [userId], references: [id])
-  userId Int?
+  Users   BankUser[]
 
   name           String
   interestRate   Int
