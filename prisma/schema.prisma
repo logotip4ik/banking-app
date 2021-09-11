@@ -15,7 +15,7 @@ model BankUser {
 
   name    String
   email   String @unique
-  picture String
+  image   String
 
   banks Bank[]
 }
