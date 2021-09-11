@@ -1,18 +1,22 @@
 import styles from '../styles/Home.module.css';
-import Cookies from 'cookies';
+import Link from 'next/link';
+import { getSession } from 'next-auth/react';
 
-export default function Home() {
-  return <div className={styles.container}>Hello world</div>;
+export default function Home({ session }) {
+  return (
+    <>
+      <Link href="/login">
+        <a>login</a>
+      </Link>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
+    </>
+  );
 }
 
-export function getServerSideProps({ req, res }) {
-  const cookies = new Cookies(req, res);
-  const token = cookies.get('__banking_cookie');
+export async function getServerSideProps({ req, res }) {
+  const session = await getSession({ req });
 
-  if (!token)
-    return {
-      redirect: {
-        destination: '/login',
-      },
-    };
+  if (!session) return { redirect: { destination: '/login' } };
+
+  return { props: { session } };
 }
