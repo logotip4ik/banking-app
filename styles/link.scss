@@ -18,7 +18,8 @@ a {
     transition: transform 0.4s ease;
   }
 
-  &:hover::after {
+  &:hover::after,
+  &:focus::after {
     transform: scale(1);
     transform-origin: left center;
   }
