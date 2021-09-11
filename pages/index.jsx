@@ -1,13 +1,15 @@
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
+import Head from 'next/head';
 import { getSession } from 'next-auth/react';
 
 export default function Home({ session }) {
   return (
     <>
-      <Link href="/login">
-        <a>login</a>
-      </Link>
+      <Head>
+        <title>Banking App</title>
+        <meta name="description" content="some banks..." />
+      </Head>
       <pre>{JSON.stringify(session, null, 2)}</pre>
     </>
   );
