@@ -6,8 +6,8 @@ export default function useBanks() {
   const { data, error } = useSWR('/api/bank', fetcher);
 
   return {
-    banks: data,
-    isLoading: !data && !error,
+    banks: data?.data,
+    isLoading: (!data && !error) || !data.ok,
     isError: error,
   };
 }
