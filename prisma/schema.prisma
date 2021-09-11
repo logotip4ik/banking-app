@@ -10,7 +10,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model BankUser {
   id Int @id @default(autoincrement())
 
   name    String
@@ -23,7 +23,7 @@ model User {
 model Bank {
   id Int @id
 
-  User   User? @relation(fields: [userId], references: [id])
+  User   BankUser? @relation(fields: [userId], references: [id])
   userId Int?
 
   name           String
