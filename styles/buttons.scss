@@ -45,3 +45,9 @@
     }
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .button {
+    --btn-surface-color: #fafafa;
+  }
+}
