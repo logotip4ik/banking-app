@@ -14,7 +14,7 @@ export default function Login() {
       email: Yup.string()
         .email('Not valid email')
         .min(3, 'Email must be at least 3 characters long')
-        .max(30, 'Email must be 30 characters or less')
+        .max(60, 'Email must be 60 characters or less')
         .required('Email is required'),
       password: Yup.string()
         .min(8, 'Password must be at least 8 characters long')
