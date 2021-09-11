@@ -1,0 +1,123 @@
+.center-container {
+  display: grid;
+  place-items: center;
+
+  min-height: 100vh;
+  width: 100%;
+}
+
+.login {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+
+  width: 92.5vw;
+  max-width: 550px;
+
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  // outline: 1px solid #ccc;
+
+  // prettier-ignore
+  box-shadow:
+    0 0.8px 2.2px rgba(0, 0, 0, 0.02),
+    0 2px 5.3px rgba(0, 0, 0, 0.028),
+    0 3.8px 10px rgba(0, 0, 0, 0.035),
+    0 6.7px 17.9px rgba(0, 0, 0, 0.042),
+    0 12.5px 33.4px rgba(0, 0, 0, 0.05),
+    0 30px 80px rgba(0, 0, 0, 0.07)
+  ;
+
+  &__heading {
+    font-weight: 400;
+  }
+  &__form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    width: 100%;
+
+    &__item {
+      width: 100%;
+
+      &__label {
+        font-size: 1.1rem;
+        font-weight: 200;
+        color: #333;
+
+        transition: color 0.4s ease;
+      }
+      &__wrapper {
+        position: relative;
+
+        width: 100%;
+
+        &__input {
+          width: 100%;
+          appearance: none;
+          outline: none;
+          border-radius: 0;
+          border: none;
+          border-bottom: 1px solid #ccc;
+          padding: 0.25rem 0.125rem;
+
+          font-family: inherit;
+          font-size: 1.1rem;
+          font-weight: 400;
+
+          transition: border-bottom-color 0.4s ease;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+
+          bottom: 0;
+          left: 50%;
+          width: 100%;
+          height: 1.5px;
+          background-color: #333;
+          border-radius: 0.25rem;
+          transform: translate(-50%, 25%) scaleX(0);
+
+          transition: transform 0.4s ease;
+        }
+
+        &:focus-within::after {
+          transform: translate(-50%, 25%) scale(1);
+        }
+      }
+      &:hover,
+      &:focus-within {
+        .login__form__item__label {
+          color: black;
+        }
+        .login__form__item__wrapper__input {
+          border-bottom-color: black;
+        }
+      }
+      &--actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+  }
+  &__horizontal-line {
+    width: 90%;
+    height: 1px;
+    background-color: #ccc;
+    opacity: 0.5;
+  }
+  &__info {
+    text-align: center;
+    color: #333;
+  }
+}
