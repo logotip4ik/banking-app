@@ -18,8 +18,9 @@
 
   padding: 1rem 2rem;
   border-radius: 0.5rem;
-  background-color: #fafafa;
+  background-color: rgba($color: #ccc, $alpha: 0.25);
   // outline: 1px solid #ccc;
+  transition: background-color 0.4s ease;
 
   // prettier-ignore
   box-shadow:
@@ -45,5 +46,11 @@
     &__item button {
       width: 100%;
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .login {
+    background-color: rgba($color: #ccc, $alpha: 0.125);
   }
 }
