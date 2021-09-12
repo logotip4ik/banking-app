@@ -7,7 +7,7 @@ export default function useBanks() {
 
   return {
     banks: data?.data,
-    isLoading: (!data && !error) || !data.ok,
+    isLoading: (!data && !error) || !data?.ok,
     isError: error,
   };
 }
