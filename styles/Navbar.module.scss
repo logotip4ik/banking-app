@@ -1,0 +1,25 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  width: 100%;
+  background-color: rgba($color: #ccc, $alpha: 0.125);
+  padding: 1rem 2rem;
+
+  &__heading {
+    font-size: 2rem;
+    font-weight: 300;
+  }
+
+  &__profile-pic {
+    --size: 50px;
+
+    height: var(--size);
+    width: var(--size);
+    object-fit: cover;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+  }
+}
