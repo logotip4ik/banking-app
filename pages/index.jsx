@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { getSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useBanks from '../hooks/useBanks';
+import Navbar from '../components/Navbar';
 
 export default function Home({ session }) {
   const { banks, isLoading, isError } = useBanks();
@@ -15,6 +16,10 @@ export default function Home({ session }) {
         <title>Banking App</title>
         <meta name="description" content="some banks..." />
       </Head>
+      <Navbar
+        username={session.user.name}
+        profilePic={session.user.image}
+      ></Navbar>
       <AnimatePresence exitBeforeEnter>
         {isLoading ? (
           <motion.h1
