@@ -1,6 +1,9 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export default NextAuth({
   secret: process.env.GLOBAL_SECRET,
@@ -29,21 +32,31 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    signIn: async ({ account, user, metadata }) => {
-      if (user.email) return;
-      // https://developer.github.com/v3/users/emails/#list-email-addresses-for-the-authenticated-user
-      const res = await fetch('https://api.github.com/user/emails', {
-        headers: {
-          Authorization: `token ${account.access_token}`,
-        },
-      });
-      const emails = await res.json();
-      if (!emails || emails.length === 0) {
-        return;
+    signIn: async ({ account, user, ...cont }) => {
+      if (!user.email) {
+        // https://developer.github.com/v3/users/emails/#list-email-addresses-for-the-authenticated-user
+        const res = await fetch('https://api.github.com/user/emails', {
+          headers: {
+            Authorization: `token ${account.access_token}`,
+          },
+        });
+        const emails = await res.json();
+        if (!emails || emails.length === 0) {
+          return;
+        }
+        // Sort by primary email - the user may have several emails, but only one of them will be primary
+        const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
+        user.email = sortedEmails[0].email;
       }
-      // Sort by primary email - the user may have several emails, but only one of them will be primary
-      const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
-      user.email = sortedEmails[0].email;
+
+      const prismaUser = user;
+      delete prismaUser.id;
+
+      await prisma.bankUser.upsert({
+        where: { email: prismaUser.email },
+        update: {},
+        create: prismaUser,
+      });
 
       return true;
     },
