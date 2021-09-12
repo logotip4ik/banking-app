@@ -25,7 +25,7 @@ model Bank {
 
   Users   BankUser[]
 
-  name           String
+  name           String @unique
   interestRate   Float
   MaxLoan        Int
   MaxDownPayment Float
