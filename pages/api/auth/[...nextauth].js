@@ -28,4 +28,24 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
+  callbacks: {
+    signIn: async ({ account, user, metadata }) => {
+      if (user.email) return;
+      // https://developer.github.com/v3/users/emails/#list-email-addresses-for-the-authenticated-user
+      const res = await fetch('https://api.github.com/user/emails', {
+        headers: {
+          Authorization: `token ${account.access_token}`,
+        },
+      });
+      const emails = await res.json();
+      if (!emails || emails.length === 0) {
+        return;
+      }
+      // Sort by primary email - the user may have several emails, but only one of them will be primary
+      const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
+      user.email = sortedEmails[0].email;
+
+      return true;
+    },
+  },
 });
