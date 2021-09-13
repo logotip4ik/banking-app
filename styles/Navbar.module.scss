@@ -5,8 +5,10 @@
   gap: 1rem;
 
   width: 100%;
-  background-color: rgba($color: #ccc, $alpha: 0.125);
+  background-color: rgba($color: #ccc, $alpha: 0.5);
   padding: 1rem 2rem;
+
+  transition: background-color 0.4s ease;
 
   &__heading {
     font-size: 2rem;
@@ -21,5 +23,11 @@
     object-fit: cover;
     border-radius: 50%;
     aspect-ratio: 1/1;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .nav {
+    background-color: rgba($color: #ccc, $alpha: 0.125);
   }
 }
