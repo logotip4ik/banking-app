@@ -2,24 +2,31 @@ import styles from '../styles/Home.module.scss';
 import modalStyles from '../styles/Modal.module.scss';
 import Head from 'next/head';
 import ReactModal from 'react-modal';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSWRConfig } from 'swr';
 import useBanks from '../hooks/useBanks';
 import Navbar from '../components/Navbar';
+
+let isEditing = null;
 
 export default function Home({ session }) {
   const { banks, isLoading, isError } = useBanks();
   const [isShowingModal, setIsShowingModal] = useState(false);
+  const { mutate } = useSWRConfig();
+
+  const inputRef = useRef();
+
   const formik = useFormik({
     initialValues: {
       name: '',
-      interestRate: 0,
-      maximumLoan: 0,
-      minimumDownPayment: 0,
-      loanTerm: 0,
+      interestRate: 0.01,
+      maxLoan: 10000,
+      maxDownPayment: 0.2,
+      loanTerm: 372,
     },
     validationSchema: Yup.object().shape({
       name: Yup.string()
@@ -30,11 +37,11 @@ export default function Home({ session }) {
         .min(0.01, 'Interest rate must be least 0.01')
         .max(1, 'Interest rate must be most 1')
         .required('Interest rate is required'),
-      maximumLoan: Yup.number()
+      maxLoan: Yup.number()
         .min(1, 'Maximum loan must be at least 1 dollar')
         .max(9999999, 'Maximum loan must be at most 9999999 dollars')
         .required('Maximum loan is required'),
-      minimumDownPayment: Yup.number()
+      maxDownPayment: Yup.number()
         .min(0.01, 'Minimum down payment must be least 0.01')
         .max(1, 'Minimum down payment must be most 1')
         .required('Minimum down payment is required'),
@@ -44,16 +51,40 @@ export default function Home({ session }) {
         .max(365 * 10, 'Loan term must be at most 10 years')
         .required('Loan term is required'),
     }),
-    onSubmit: (form) => console.table(form),
+    onSubmit: (form) => {
+      let url = '/api/bank';
+      if (isEditing) url += `/${isEditing}`;
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(form),
+      }).then((res) => {
+        if (res.ok) setIsShowingModal(false);
+        mutate('/api/bank');
+      });
+    },
   });
 
   const addBank = useCallback(() => {
-    formik.resetForm();
+    Object.keys(formik.values).forEach(
+      (key) => (formik.values[key] = formik.initialValues[key]),
+    );
+    isEditing = null;
     setIsShowingModal(true);
   }, [formik]);
+  const editBank = useCallback(
+    (bank) => {
+      Object.keys(bank).forEach((key) =>
+        formik.values[key] !== undefined
+          ? (formik.values[key] = bank[key])
+          : null,
+      );
+      isEditing = bank.id;
+      setIsShowingModal(true);
+    },
+    [formik],
+  );
 
   if (isError) return <h1>Something went wrong...</h1>;
-  // TODO: add modal to create banks
   // TODO: add mortage calculator and fetch the user banks
   return (
     <>
@@ -103,16 +134,34 @@ export default function Home({ session }) {
                   <h3>You no banks, =_=</h3>
                 </div>
               ) : (
-                <motion.ul className={styles.main__content__list}>
-                  {banks.map((bank) => (
-                    <motion.li
-                      key={bank.name}
-                      className={styles.main__content__list__item}
-                    >
-                      {JSON.stringify(bank, null, 2)}
-                    </motion.li>
-                  ))}
-                </motion.ul>
+                <table className={styles.main__content__table} width="100">
+                  <thead className={styles.main__content__table__head}>
+                    <tr>
+                      <th>Name</th>
+                      <th>Interest Rate</th>
+                      <th>Max Loan</th>
+                      <th>Max Down Payment</th>
+                      <th>Loan Term</th>
+                    </tr>
+                  </thead>
+                  <tbody className={styles.main__content__table__body}>
+                    {banks.map((bank) => (
+                      <tr key={bank.name} onClick={() => editBank(bank)}>
+                        {Object.keys(bank)
+                          .map((key) => {
+                            if (key === 'id') return;
+                            if (key === 'bankUserId') return;
+                            return (
+                              <td key={`${bank.name}-${key}`} align="center">
+                                {bank[key]}
+                              </td>
+                            );
+                          })
+                          .filter(Boolean)}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </motion.div>
           )}
@@ -120,17 +169,24 @@ export default function Home({ session }) {
       </div>
       <ReactModal
         isOpen={isShowingModal}
-        onRequestClose={() => setIsShowingModal(false)}
+        onRequestClose={() => {
+          setIsShowingModal(false);
+          formik.resetForm();
+        }}
         preventScroll
         className={modalStyles.modal}
         closeTimeoutMS={300}
+        onAfterOpen={() => inputRef.current.focus()}
       >
         <h1 className={modalStyles.modal__heading}>
           {!formik.values.name ? 'New' : null} Bank
         </h1>
         <form
           onSubmit={formik.handleSubmit}
-          onReset={formik.handleReset}
+          onReset={() => {
+            formik.resetForm();
+            setIsShowingModal(false);
+          }}
           className={modalStyles.modal__form}
         >
           <div className={modalStyles.modal__form__item}>
@@ -144,6 +200,8 @@ export default function Home({ session }) {
               name="bank_name"
               type="text"
               className={modalStyles.modal__form__item__input}
+              ref={inputRef}
+              {...formik.getFieldProps('name')}
             />
           </div>
           <div className={modalStyles.modal__form__item}>
@@ -160,6 +218,7 @@ export default function Home({ session }) {
               step="0.01"
               max="1"
               className={modalStyles.modal__form__item__input}
+              {...formik.getFieldProps('interestRate')}
             />
           </div>
           <div className={modalStyles.modal__form__item}>
@@ -176,6 +235,7 @@ export default function Home({ session }) {
               step="1"
               max="9999999"
               className={modalStyles.modal__form__item__input}
+              {...formik.getFieldProps('maxLoan')}
             />
           </div>
           <div className={modalStyles.modal__form__item}>
@@ -192,6 +252,7 @@ export default function Home({ session }) {
               step="0.01"
               max="1"
               className={modalStyles.modal__form__item__input}
+              {...formik.getFieldProps('maxDownPayment')}
             />
           </div>
           <div className={modalStyles.modal__form__item}>
@@ -209,6 +270,7 @@ export default function Home({ session }) {
               step="1"
               max="3650"
               className={modalStyles.modal__form__item__input}
+              {...formik.getFieldProps('loanTerm')}
             />
           </div>
           <div
