@@ -27,9 +27,25 @@ body {
   transition: background-color 0.4s ease;
 }
 
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.4s ease;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --surface-color: #282828;
     --text-color: #fafafa;
+  }
+  .ReactModal__Overlay {
+    background-color: rgba($color: #000000, $alpha: 0.75) !important;
   }
 }
