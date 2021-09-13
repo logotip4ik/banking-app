@@ -49,5 +49,10 @@
 @media (prefers-color-scheme: dark) {
   .button {
     --btn-surface-color: #fafafa;
+    color: #222;
+
+    &--outlined {
+      color: white;
+    }
   }
 }
