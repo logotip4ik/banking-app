@@ -21,7 +21,7 @@ model BankUser {
 }
 
 model Bank {
-  id Int @id
+  id Int @id @default(autoincrement())
 
   User BankUser @relation(fields: [bankUserId], references: [id])
   bankUserId     Int
