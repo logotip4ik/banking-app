@@ -28,7 +28,7 @@ model Bank {
 
   name           String @unique
   interestRate   Float
-  MaxLoan        Int
-  MaxDownPayment Float
-  LoanTerm       Int
+  maxLoan        Int
+  maxDownPayment Float
+  loanTerm       Int
 }
