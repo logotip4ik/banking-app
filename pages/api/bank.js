@@ -25,12 +25,19 @@ async function getUserBanks(req, res, session) {
  * @param res {import("next").NextApiResponse}
  */
 async function addBankToUser(req, res, session) {
-  if (!req.body.bankId)
-    return res
-      .status(400)
-      .json({ ok: true, msg: 'Not enough data was provided' });
-
-  const banks = await prisma.bank.create({ data: {} });
+  let data;
+  try {
+    if (typeof req.body === 'string') data = JSON.parse(req.body);
+    if (typeof req.body === 'object') data = { ...req.body };
+  } catch (err) {
+    res.status(400).json({ ok: false, err: err.message });
+  }
+  const bank = await prisma.bank
+    .create({
+      data: { ...data, User: { connect: { email: session.user.email } } },
+    })
+    .catch((err) => res.status(500).json({ ok: false, err: err.message }));
+  res.status(201).json({ ok: true, data: bank });
 }
 
 export default async function handler(req, res) {
@@ -46,5 +53,5 @@ export default async function handler(req, res) {
 
   await prisma.$disconnect();
 
-  res.status(400).json({ ok: false });
+  if (!res.writableEnded) res.status(400).json({ ok: false });
 }
