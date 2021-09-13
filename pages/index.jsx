@@ -1,15 +1,60 @@
 import styles from '../styles/Home.module.scss';
+import modalStyles from '../styles/Modal.module.scss';
 import Head from 'next/head';
+import ReactModal from 'react-modal';
+import { useCallback, useState } from 'react';
 import { getSession } from 'next-auth/react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import useBanks from '../hooks/useBanks';
 import Navbar from '../components/Navbar';
 
 export default function Home({ session }) {
   const { banks, isLoading, isError } = useBanks();
+  const [isShowingModal, setIsShowingModal] = useState(false);
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      interestRate: 0,
+      maximumLoan: 0,
+      minimumDownPayment: 0,
+      loanTerm: 0,
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string()
+        .min(1, 'Bank name must contain at least 1 character')
+        .max(50, 'Bank name must contain at most 50 characters')
+        .required('Bank name is required'),
+      interestRate: Yup.number()
+        .min(0.01, 'Interest rate must be least 0.01')
+        .max(1, 'Interest rate must be most 1')
+        .required('Interest rate is required'),
+      maximumLoan: Yup.number()
+        .min(1, 'Maximum loan must be at least 1 dollar')
+        .max(9999999, 'Maximum loan must be at most 9999999 dollars')
+        .required('Maximum loan is required'),
+      minimumDownPayment: Yup.number()
+        .min(0.01, 'Minimum down payment must be least 0.01')
+        .max(1, 'Minimum down payment must be most 1')
+        .required('Minimum down payment is required'),
+      loanTerm: Yup.number()
+        .min(1, 'Loan term must be least 1 day')
+        // 10 years
+        .max(365 * 10, 'Loan term must be at most 10 years')
+        .required('Loan term is required'),
+    }),
+    onSubmit: (form) => console.table(form),
+  });
+
+  const addBank = useCallback(() => {
+    formik.resetForm();
+    setIsShowingModal(true);
+  }, [formik]);
 
   if (isError) return <h1>Something went wrong...</h1>;
-
+  // TODO: add modal to create banks
+  // TODO: add mortage calculator and fetch the user banks
   return (
     <>
       <Head>
@@ -42,7 +87,10 @@ export default function Home({ session }) {
                 <h2 className={styles.main__content__header__text}>
                   Your Banks:{' '}
                 </h2>
-                <button className={styles.main__content__header__button}>
+                <button
+                  className={styles.main__content__header__button}
+                  onClick={() => addBank()}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
@@ -70,6 +118,111 @@ export default function Home({ session }) {
           )}
         </AnimatePresence>
       </div>
+      <ReactModal
+        isOpen={isShowingModal}
+        onRequestClose={() => setIsShowingModal(false)}
+        preventScroll
+        className={modalStyles.modal}
+        closeTimeoutMS={300}
+      >
+        <h1 className={modalStyles.modal__heading}>
+          {!formik.values.name ? 'New' : null} Bank
+        </h1>
+        <form
+          onSubmit={formik.handleSubmit}
+          onReset={formik.handleReset}
+          className={modalStyles.modal__form}
+        >
+          <div className={modalStyles.modal__form__item}>
+            <label
+              htmlFor="bank_name"
+              className={modalStyles.modal__form__item__label}
+            >
+              Name:
+            </label>
+            <input
+              name="bank_name"
+              type="text"
+              className={modalStyles.modal__form__item__input}
+            />
+          </div>
+          <div className={modalStyles.modal__form__item}>
+            <label
+              htmlFor="bank_interest_rate"
+              className={modalStyles.modal__form__item__label}
+            >
+              Interest Rate:
+            </label>
+            <input
+              name="bank_interest_rate"
+              type="number"
+              min="0.01"
+              step="0.01"
+              max="1"
+              className={modalStyles.modal__form__item__input}
+            />
+          </div>
+          <div className={modalStyles.modal__form__item}>
+            <label
+              htmlFor="bank_maximum_loan"
+              className={modalStyles.modal__form__item__label}
+            >
+              Maximum loan:
+            </label>
+            <input
+              name="bank_maximum_loan"
+              type="number"
+              min="1"
+              step="1"
+              max="9999999"
+              className={modalStyles.modal__form__item__input}
+            />
+          </div>
+          <div className={modalStyles.modal__form__item}>
+            <label
+              htmlFor="bank_minimum_down_payment"
+              className={modalStyles.modal__form__item__label}
+            >
+              Minimum Down Payment:
+            </label>
+            <input
+              name="bank_minimum_down_payment"
+              type="number"
+              min="0.01"
+              step="0.01"
+              max="1"
+              className={modalStyles.modal__form__item__input}
+            />
+          </div>
+          <div className={modalStyles.modal__form__item}>
+            <label
+              htmlFor="bank_loan_term"
+              className={modalStyles.modal__form__item__label}
+            >
+              Loan Term:
+            </label>
+            {/* TODO: made days or month or years selector */}
+            <input
+              name="bank_loan_term"
+              type="number"
+              min="1"
+              step="1"
+              max="3650"
+              className={modalStyles.modal__form__item__input}
+            />
+          </div>
+          <div
+            className={`${modalStyles.modal__form__item} ${modalStyles['modal__form__item--center']}`}
+          >
+            <button className={'button'} type="submit">
+              Save
+            </button>
+            <button className={'button button--outlined'} type="reset">
+              Reset
+            </button>
+          </div>
+        </form>
+      </ReactModal>
     </>
   );
 }
