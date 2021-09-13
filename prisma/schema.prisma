@@ -13,9 +13,9 @@ generator client {
 model BankUser {
   id Int @id @default(autoincrement())
 
-  name    String
-  email   String @unique
-  image   String
+  name  String
+  email String @unique
+  image String
 
   banks Bank[]
 }
@@ -23,7 +23,8 @@ model BankUser {
 model Bank {
   id Int @id
 
-  Users   BankUser[]
+  User BankUser @relation(fields: [bankUserId], references: [id])
+  bankUserId     Int
 
   name           String @unique
   interestRate   Float
