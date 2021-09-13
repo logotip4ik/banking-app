@@ -67,14 +67,24 @@
         }
       }
     }
-    &__list {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 0.25rem;
-
+    &__table {
       width: 100%;
+
+      &__head {
+        background-color: hsla(0, 0%, 50%, 0.5);
+
+        th {
+          padding: 0.5rem 0.25rem;
+        }
+      }
+      &__body {
+        tr:nth-child(even) {
+          background-color: hsla(0, 0%, 50%, 0.25);
+        }
+        td {
+          padding: 0.25rem;
+        }
+      }
 
       &--empty {
         justify-content: center;
