@@ -41,8 +41,10 @@ export default async function handler(req, res) {
       msg: 'You need to be authorized to access this resource',
     });
 
-  if (req.method === 'GET') return await getUserBanks(req, res, session);
-  if (req.method === 'POST') return await addBankToUser(req, res, session);
+  if (req.method === 'GET') await getUserBanks(req, res, session);
+  if (req.method === 'POST') await addBankToUser(req, res, session);
+
+  await prisma.$disconnect();
 
   res.status(400).json({ ok: false });
 }

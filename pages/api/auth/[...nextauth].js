@@ -58,6 +58,8 @@ export default NextAuth({
         create: prismaUser,
       });
 
+      await prisma.$disconnect();
+
       return true;
     },
   },
