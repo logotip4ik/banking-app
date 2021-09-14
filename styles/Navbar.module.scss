@@ -4,6 +4,7 @@
   align-items: center;
   gap: 1rem;
 
+  position: relative;
   width: 100%;
   background-color: rgba($color: #ccc, $alpha: 0.5);
   padding: 1rem 2rem;
@@ -24,6 +25,8 @@
     object-fit: cover;
     border-radius: 50%;
     aspect-ratio: 1/1;
+
+    cursor: pointer;
   }
 }
 
