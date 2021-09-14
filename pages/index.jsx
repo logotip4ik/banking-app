@@ -137,7 +137,7 @@ export default function Home({ session }) {
               </div>
               {banks.length === 0 ? (
                 <div
-                  className={`${styles.main__content__list} ${styles['main__content__list--empty']}`}
+                  className={`${styles.main__content__table} ${styles['main__content__table--empty']}`}
                 >
                   <h3>You no banks, =_=</h3>
                 </div>

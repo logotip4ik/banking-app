@@ -123,11 +123,9 @@
       }
 
       &--empty {
-        justify-content: center;
-        align-items: center;
-
         h3 {
           font-weight: 200;
+          text-align: center;
         }
       }
     }
