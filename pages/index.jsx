@@ -13,7 +13,7 @@ import Navbar from '../components/Navbar';
 
 let isEditing = null;
 
-export default function Home({ session }) {
+export default function Home() {
   const { banks, isLoading, isError } = useBanks();
   const [isShowingModal, setIsShowingModal] = useState(false);
   const { mutate } = useSWRConfig();
@@ -100,10 +100,6 @@ export default function Home({ session }) {
         <title>Banking App</title>
         <meta name="description" content="some banks..." />
       </Head>
-      <Navbar
-        username={session.user.name}
-        profilePic={session.user.image}
-      ></Navbar>
       <div className={styles.main}>
         <AnimatePresence exitBeforeEnter>
           {isLoading ? (
@@ -333,5 +329,5 @@ export async function getServerSideProps({ req, res }) {
 
   if (!session) return { redirect: { destination: '/login' } };
 
-  return { props: { session } };
+  return { props: {} };
 }
