@@ -21,13 +21,24 @@ async function editBankAtUser(req, res) {
   }
   delete data.id;
 
-  const bank = await prisma.bank
+  const bank = await prisma.bank.findUnique({
+    where: { id: parseInt(req.query.id) },
+    include: { User: true },
+  });
+
+  if (bank.User.email !== session.user.email)
+    return res.status(401).json({
+      ok: false,
+      err: 'You must be authorized tp access this resource',
+    });
+
+  const updatedBank = await prisma.bank
     .update({
       where: { id },
       data: { ...data },
     })
     .catch((err) => res.status(500).json({ ok: false, err: err.message }));
-  res.status(201).json({ ok: true, data: bank });
+  res.status(201).json({ ok: true, data: updatedBank });
 }
 
 async function deleteBankAtUser(req, res, session) {
