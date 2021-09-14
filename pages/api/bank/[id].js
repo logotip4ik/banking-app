@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
  * @param req {import("next").NextApiRequest}
  * @param res {import("next").NextApiResponse}
  */
-async function editBankAtUser(req, res) {
+async function editBankAtUser(req, res, session) {
   let data;
   let id;
   try {
@@ -52,8 +52,6 @@ async function deleteBankAtUser(req, res, session) {
     })
     .catch((err) => res.status(500).json({ ok: false, err: err.message }));
 
-  console.log({ bank });
-
   if (bank.User.email !== session.user.email)
     return res.json(401).json({
       ok: false,
@@ -68,7 +66,7 @@ async function deleteBankAtUser(req, res, session) {
 }
 
 export default async function handler(req, res) {
-  const session = getSession({ req });
+  const session = await getSession({ req });
   if (!session)
     return res.status(401).json({
       ok: false,
