@@ -167,11 +167,13 @@ export default function Home({ session }) {
                             );
                           })
                           .filter(Boolean)}
-                        <td>
+                        <td
+                          className={styles.main__content__table__body__buttons}
+                        >
                           <button
                             onClick={() => editBank(bank)}
                             className={
-                              styles.main__content__table__body__button
+                              styles.main__content__table__body__buttons__button
                             }
                           >
                             <svg
@@ -184,7 +186,7 @@ export default function Home({ session }) {
                           <button
                             onClick={() => deleteBank(bank)}
                             className={
-                              styles.main__content__table__body__button
+                              styles.main__content__table__body__buttons__button
                             }
                           >
                             <svg

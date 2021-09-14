@@ -85,32 +85,39 @@
           padding: 0.25rem;
         }
 
-        &__button {
-          --size: 30px;
-
-          display: inline-flex;
+        &__buttons {
+          display: flex;
           justify-content: center;
           align-items: center;
+          gap: 0.5rem;
 
-          width: var(--size);
-          height: var(--size);
-          border: none;
-          border-radius: 50%;
-          aspect-ratio: 1/1;
-          background-color: hsla(0, 0%, 50%, 0.25);
+          &__button {
+            --size: 30px;
 
-          transition: background-color 0.4s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
 
-          svg {
-            height: 60%;
-            width: auto;
-            fill: currentColor;
-          }
+            width: var(--size);
+            height: var(--size);
+            border: none;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            background-color: hsla(0, 0%, 50%, 0.125);
 
-          &:hover,
-          &:focus {
-            transition: none;
-            background-color: hsla(0, 0%, 50%, 0.5);
+            transition: background-color 0.4s ease;
+
+            svg {
+              height: 60%;
+              width: auto;
+              fill: currentColor;
+            }
+
+            &:hover,
+            &:focus {
+              transition: none;
+              background-color: hsla(0, 0%, 50%, 0.25);
+            }
           }
         }
       }
