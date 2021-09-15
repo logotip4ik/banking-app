@@ -324,7 +324,7 @@ export default function Home() {
   );
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req }) {
   const session = await getSession({ req });
 
   if (!session) return { redirect: { destination: '/login' } };
