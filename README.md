@@ -2,11 +2,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, run the postgres server:
 
 ```bash
-npm run dev
-# or
+docker-compose up
+```
+
+Then run the development server:
+
+```bash
 yarn dev
 ```
 
