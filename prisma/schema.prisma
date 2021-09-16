@@ -10,6 +10,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String
+  ownerId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User?    @relation(fields: [ownerId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  picture   String?
+  createdAt DateTime @default(now())
+  Note      Note[]
+}
+
+
 model BankUser {
   id Int @id @default(autoincrement())
 
